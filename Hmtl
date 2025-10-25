@@ -1,0 +1,215 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BestDeal — Simple Affiliate Manager</title>
+  <style>
+    :root{--bg:#0f1724;--card:#0b1220;--accent:#ef4444;--muted:#94a3b8;--glass:rgba(255,255,255,0.03)}
+    *{box-sizing:border-box;font-family:Inter, system-ui, Arial}
+    body{margin:0;background:linear-gradient(180deg,#071226 0%, #071428 100%);color:#e6eef8;padding:18px}
+    header{display:flex;align-items:center;gap:16px;margin-bottom:18px}
+    header h1{font-size:20px;margin:0}
+    .container{max-width:980px;margin:0 auto}
+    .grid{display:grid;grid-template-columns:1fr 360px;gap:18px}
+    .card{background:var(--card);padding:14px;border-radius:12px;box-shadow:0 6px 18px rgba(3,6,12,0.6)}
+    label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+    input[type=text], input[type=url], input[type=number], select, textarea{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:var(--glass);color:inherit}
+    button{background:var(--accent);border:none;color:white;padding:10px 12px;border-radius:10px;cursor:pointer}
+    .list{display:flex;flex-direction:column;gap:10px}
+    .product{display:flex;gap:12px;align-items:center;padding:10px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01))}
+    .thumb{width:68px;height:68px;border-radius:8px;background:#082233;display:flex;align-items:center;justify-content:center;overflow:hidden}
+    .thumb img{width:100%;height:100%;object-fit:cover}
+    .meta{flex:1}
+    .meta h3{margin:0;font-size:15px}
+    .meta p{margin:4px 0 0;font-size:13px;color:var(--muted)}
+    .actions{display:flex;gap:8px}
+    .small{padding:6px 8px;font-size:13px;border-radius:8px}
+    .btn-secondary{background:transparent;border:1px solid rgba(255,255,255,0.06);color:#cde}
+    .tag{font-size:12px;padding:4px 6px;border-radius:6px;background:rgba(255,255,255,0.03);color:var(--muted)}
+    footer{margin-top:14px;color:var(--muted);font-size:13px}
+    @media(max-width:880px){.grid{grid-template-columns:1fr}.container{padding:0 8px}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 24 24'><rect width='24' height='24' rx='6' fill='%23ef4444'/><text x='12' y='16' font-size='12' font-family='Arial' font-weight='700' text-anchor='middle' fill='white'>BD</text></svg>" alt="logo" style="border-radius:8px;"/>
+      <div>
+        <h1>BestDeal — Affiliate product manager</h1>
+        <div style="color:var(--muted);font-size:13px">Add, edit, export and manage affiliate product links (Amazon/Flipkart)</div>
+      </div>
+    </header><div class="grid">
+  <!-- LEFT: product list -->
+  <div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <strong>Products</strong>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input id="search" type="text" placeholder="Search title or platform" style="padding:8px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.04);color:inherit" />
+          <button id="addNew" class="small">+ Add</button>
+        </div>
+      </div>
+
+      <div id="list" class="list">
+        <!-- Product items injected here -->
+      </div>
+
+      <footer>
+        Tip: Click 'Open' to go to the affiliate link. Use Export/Import to move products between devices.
+      </footer>
+    </div>
+
+    <div style="height:12px"></div>
+
+    <div class="card" style="display:flex;gap:8px;align-items:center;justify-content:space-between">
+      <div>
+        <div style="font-weight:700">Export / Import</div>
+        <div style="color:var(--muted);font-size:13px">Save your product list as JSON or load a previous export.</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button id="export" class="small btn-secondary">Export JSON</button>
+        <label class="small btn-secondary" style="cursor:pointer"><input id="fileInput" type="file" accept="application/json" style="display:none"/>Import</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: form -->
+  <div>
+    <div class="card">
+      <strong id="formTitle">Add Product</strong>
+      <div style="height:10px"></div>
+      <form id="productForm">
+        <label>Title</label>
+        <input id="title" type="text" required />
+
+        <label>Price / MRP</label>
+        <input id="price" type="number" step="0.01" />
+
+        <label>Platform</label>
+        <select id="platform">
+          <option value="Amazon">Amazon</option>
+          <option value="Flipkart">Flipkart</option>
+          <option value="Other">Other</option>
+        </select>
+
+        <label>Affiliate link (full URL)</label>
+        <input id="link" type="url" placeholder="https://www.amazon.in/...?tag=yourtag" required />
+
+        <label>Image URL (optional)</label>
+        <input id="image" type="url" placeholder="https://...jpg" />
+
+        <label>Description (optional)</label>
+        <textarea id="desc" rows="3"></textarea>
+
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button type="submit">Save</button>
+          <button type="button" id="cancel" class="btn-secondary">Cancel</button>
+          <button type="button" id="clearAll" class="btn-secondary">Clear all</button>
+        </div>
+      </form>
+    </div>
+
+    <div style="height:12px"></div>
+
+    <div class="card" id="previewCard">
+      <strong>Preview</strong>
+      <div style="height:10px"></div>
+      <div class="product" id="preview">
+        <div class="thumb"><img id="previewImg" src="" alt=""></div>
+        <div class="meta"><h3 id="previewTitle">No product</h3><p id="previewDesc">Add product details to preview how it will look on the list.</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </div>  <script>
+    // Simple product manager using localStorage. No backend required.
+    const storageKey = 'bestdeal_products_v1';
+    let products = JSON.parse(localStorage.getItem(storageKey) || '[]');
+    let editId = null;
+
+    // DOM refs
+    const listEl = document.getElementById('list');
+    const form = document.getElementById('productForm');
+    const titleIn = document.getElementById('title');
+    const priceIn = document.getElementById('price');
+    const platformIn = document.getElementById('platform');
+    const linkIn = document.getElementById('link');
+    const imageIn = document.getElementById('image');
+    const descIn = document.getElementById('desc');
+    const formTitle = document.getElementById('formTitle');
+    const previewImg = document.getElementById('previewImg');
+    const previewTitle = document.getElementById('previewTitle');
+    const previewDesc = document.getElementById('previewDesc');
+    const addNew = document.getElementById('addNew');
+    const cancel = document.getElementById('cancel');
+    const clearAll = document.getElementById('clearAll');
+    const exportBtn = document.getElementById('export');
+    const fileInput = document.getElementById('fileInput');
+    const search = document.getElementById('search');
+
+    function save() { localStorage.setItem(storageKey, JSON.stringify(products)); }
+
+    function renderList(filter=''){
+      listEl.innerHTML='';
+      const items = products.filter(p => (p.title+ ' ' + p.platform).toLowerCase().includes(filter.toLowerCase()));
+      if(items.length===0){ listEl.innerHTML='<div style="color:var(--muted);padding:10px">No products — add one now.</div>';return }
+      items.forEach(p=>{
+        const el = document.createElement('div'); el.className='product';
+        const thumb = document.createElement('div'); thumb.className='thumb';
+        const img = document.createElement('img'); img.src = p.image || 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><rect width="100%" height="100%" fill="%23082233"/><text x="50%" y="55%" font-size="20" text-anchor="middle" fill="%239ab7c9">No Image</text></svg>';
+        thumb.appendChild(img);
+        const meta = document.createElement('div'); meta.className='meta';
+        meta.innerHTML = `<h3>${escapeHtml(p.title)}</h3><p class="tag">${escapeHtml(p.platform)} — ₹${p.price || '—'}</p>` + (p.desc?`<div style="margin-top:6px;color:var(--muted);font-size:13px">${escapeHtml(p.desc)}</div>`:'');
+        const actions = document.createElement('div'); actions.className='actions';
+        const open = document.createElement('button'); open.className='small'; open.textContent='Open'; open.onclick = ()=> window.open(p.link,'_blank');
+        const edit = document.createElement('button'); edit.className='small btn-secondary'; edit.textContent='Edit'; edit.onclick = ()=> startEdit(p.id);
+        const del = document.createElement('button'); del.className='small btn-secondary'; del.textContent='Delete'; del.onclick = ()=> { if(confirm('Delete this product?')){ products = products.filter(x=>x.id!==p.id); save(); renderList(search.value); }}
+        actions.appendChild(open); actions.appendChild(edit); actions.appendChild(del);
+        el.appendChild(thumb); el.appendChild(meta); el.appendChild(actions);
+        listEl.appendChild(el);
+      })
+    }
+
+    function escapeHtml(str){ if(!str) return ''; return String(str).replace(/[&<>"']/g, s=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[s])); }
+
+    function startEdit(id){ const p = products.find(x=>x.id===id); if(!p) return; editId = id; formTitle.textContent='Edit Product'; titleIn.value=p.title; priceIn.value=p.price||''; platformIn.value=p.platform||'Other'; linkIn.value=p.link||''; imageIn.value=p.image||''; descIn.value=p.desc||''; updatePreview(); window.scrollTo({top:0,behavior:'smooth'});
+    }
+
+    function resetForm(){ editId = null; formTitle.textContent='Add Product'; form.reset(); updatePreview(); }
+
+    function updatePreview(){ previewImg.src = imageIn.value || 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><rect width="100%" height="100%" fill="%23082233"/><text x="50%" y="55%" font-size="20" text-anchor="middle" fill="%239ab7c9">No Image</text></svg>';
+      previewTitle.textContent = titleIn.value || 'No product'; previewDesc.textContent = descIn.value || 'Add product details to preview how it will look on the list.';
+    }
+
+    form.addEventListener('input', updatePreview);
+
+    form.addEventListener('submit', e=>{
+      e.preventDefault();
+      const data = { id: editId || ('p_'+Date.now()), title: titleIn.value.trim(), price: priceIn.value?Number(priceIn.value):null, platform: platformIn.value, link: linkIn.value.trim(), image: imageIn.value.trim(), desc: descIn.value.trim() };
+      if(editId){ products = products.map(p=> p.id===editId? data : p); }
+      else { products.unshift(data); }
+      save(); renderList(search.value); resetForm();
+    });
+
+    addNew.addEventListener('click', ()=>{ resetForm(); titleIn.focus(); });
+    cancel.addEventListener('click', resetForm);
+    clearAll.addEventListener('click', ()=>{ if(confirm('Clear all products? This cannot be undone.')){ products=[]; save(); renderList(); }});
+    exportBtn.addEventListener('click', ()=>{
+      const blob = new Blob([JSON.stringify(products,null,2)],{type:'application/json'});
+      const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href=url; a.download = 'bestdeal_products.json'; a.click(); URL.revokeObjectURL(url);
+    });
+    fileInput.addEventListener('change', async(e)=>{
+      const f = e.target.files[0]; if(!f) return; const txt = await f.text(); try{ const imported = JSON.parse(txt); if(!Array.isArray(imported)) throw new Error('Invalid file'); if(confirm('Import will replace current products. Continue?')){ products = imported; save(); renderList(); }}catch(err){ alert('Invalid JSON file'); }
+    });
+
+    search.addEventListener('input', ()=> renderList(search.value));
+
+    // initial render
+    renderList(); updatePreview();
+
+    // Helpful: copy-paste friendly single-file site -> if you want hosting, put this file on GitHub Pages, Netlify, Vercel, or any static host.
+  </script></body>
+</html>
